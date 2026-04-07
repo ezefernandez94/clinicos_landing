@@ -67,25 +67,35 @@ form.addEventListener('submit', (e) => {
     formMsg.style.color = '#fa9190';
     return;
   }
-
-  // Simulate submission (replace with real endpoint)
+  
   const btn = form.querySelector('button[type="submit"]');
   btn.disabled = true;
   btn.textContent = 'Sending…';
 
-  setTimeout(() => {
-    formMsg.textContent = '✓ Thanks! We\'ll be in touch shortly.';
-    formMsg.style.color = '#86efac';
-    btn.textContent = 'Sent!';
-    form.reset();
+  const formData = new FormData(form);
 
-    setTimeout(() => {
+  fetch("/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(formData).toString()
+  })
+    .then(() => {
+      console.log("Form successfully submitted")
+      formMsg.textContent = '✓ Thanks! We\'ll be in touch shortly.';
+      formMsg.style.color = '#86efac';
+      btn.textContent = 'Sent!';
+      form.reset();
+    })
+    .catch(error => {
+      formMsg.textContent = 'Something went wrong. Please try again.';
+      formMsg.style.color = '#fa9190';
       btn.disabled = false;
       btn.textContent = 'Contact Us';
-      formMsg.textContent = '';
-    }, 5000);
-  }, 1000);
+      console.error(error);
+    });
 });
+
+
 
 // ─── SMOOTH ACTIVE NAV LINK HIGHLIGHT ─────────────────
 const sections = document.querySelectorAll('section[id]');
